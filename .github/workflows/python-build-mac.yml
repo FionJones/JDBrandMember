@@ -9,7 +9,7 @@ on:
       - 'v*.*.*'
 
 jobs:
-  build-on-Linux:
+  build:
 
       runs-on: ${{ matrix.os }}
       strategy:
@@ -37,7 +37,7 @@ jobs:
           cp shopid.yaml dist/
           cp config.yaml dist/
           cp LICENSE dist/
-          tar -czvf ${{ matrix.os }}_${{ github.ref }}.tar.gz dist/
+          tar -czvf ${{ matrix.os }}.tar.gz dist/
           
       - name: Gzip on Macos
         if: matrix.os == 'macos-10.15'
@@ -45,15 +45,15 @@ jobs:
           cp shopid.yaml dist/
           cp config.yaml dist/
           cp LICENSE dist/
-          tar -czvf ${{ matrix.os }}_${{ github.ref }}.tar.gz dist/
+          tar -czvf ${{ matrix.os }}.tar.gz dist/
       
-      - name: Gzip on Macos
+      - name: Gzip on Ubuntu
         if: matrix.os == 'ubuntu-18.04'
         run: |
           cp shopid.yaml dist/
           cp config.yaml dist/
           cp LICENSE dist/
-          tar -czvf ${{ matrix.os }}_${{ github.ref }}.tar.gz dist/
+          tar -czvf ${{ matrix.os }}.tar.gz dist/
           
       - name: Push
         run: |
