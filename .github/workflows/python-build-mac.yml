@@ -5,9 +5,8 @@ name: Python package
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    tags:
+      - 'v*.*.*'
 
 jobs:
   build-on-Linux:
@@ -35,9 +34,9 @@ jobs:
       - name: Gzip on Windows
         if: matrix.os == 'windows-2019'
         run: |
-          copy /B /Y shopid.yaml dist
-          copy /B /Y config.yaml dist
-          copy /B /Y LICENSE dist
+          cp shopid.yaml dist/
+          cp config.yaml dist/
+          cp LICENSE dist/
           tar -czvf ${{ matrix.os }}_${{ github.ref }}.tar.gz dist/
           
       - name: Gzip on Macos
