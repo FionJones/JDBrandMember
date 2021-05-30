@@ -10,7 +10,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  build on macos:
 
     runs-on: macos-latest
 
@@ -44,3 +44,4 @@ jobs:
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.TOKEN }}
+
