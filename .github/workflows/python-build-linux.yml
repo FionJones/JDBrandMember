@@ -30,7 +30,7 @@ jobs:
         cp shopid.yaml dist/
         cp config.yaml dist/
         cp LICENSE dist/
-        tar -czvf macos.tar.gz dist/
+        tar -czvf linux.tar.gz dist/
     - name: Push
       run: |
         git config --global user.email 1258255974@qq.com
