@@ -59,7 +59,7 @@ jobs:
         run: |
           git config --global user.email 1258255974@qq.com
           git config --global user.name FionJones
-          git add linux.tar.gz
+          git add ${{ matrix.os }}.tar.gz
           git commit -m "Update Dist"
           
       - name: Push changes
