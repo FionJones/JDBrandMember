@@ -30,13 +30,14 @@ jobs:
           python3 -m pip install -r requirements.txt
           python3 -m pip install pyinstaller
           pyinstaller -F main.py
+          ls
           
       - name: Gzip on Windows
         if: matrix.os == 'windows-2019'
         run: |
-          cp shopid.yaml dist/
-          cp config.yaml dist/
-          cp LICENSE dist/
+          cp shopid.yaml ./dist/
+          cp config.yaml ./dist/
+          cp LICENSE ./dist/
           tar -czvf ${{ matrix.os }}.tar.gz dist/
           
       - name: Gzip on Macos
@@ -55,16 +56,16 @@ jobs:
           cp LICENSE dist/
           tar -czvf ${{ matrix.os }}.tar.gz dist/
           
-#       - name: Create Release # 创建Release，可以在仓库看到一个个版本
-#         id: create_release
-#         uses: actions/create-release@master
-#         env:
-#           GITHUB_TOKEN: ${{ secrets.TOKEN }} # 之前GitHub添加的Token
-#         with:
-#           tag_name: ${{ github.ref }} # (tag)标签名称
-#           release_name: Release ${{ github.ref }}
-#           draft: false # 是否是草稿
-#           prerelease: false # 是否是预发布
+      - name: Create Release # 创建Release，可以在仓库看到一个个版本
+        id: create_release
+        uses: actions/create-release@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }} # 之前GitHub添加的Token
+        with:
+          tag_name: ${{ github.ref }} # (tag)标签名称
+          release_name: Release ${{ github.ref }}
+          draft: false # 是否是草稿
+          prerelease: false # 是否是预发布
           
       - name: Upload Release Asset
         id: upload-release-asset
