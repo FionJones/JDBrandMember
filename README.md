@@ -1,80 +1,95 @@
-### 京东入会领京豆
+>   这是一个未完成的文档！
 
-#### 要求
+[![GitHub all releases](https://img.shields.io/github/downloads/AntonVanke/JDBrandMember/total?style=for-the-badge)](https://github.com/AntonVanke/JDBrandMember/releases/)[![GitHub release (latest by date)](https://img.shields.io/github/v/release/AntonVanke/JDBrandMember?style=for-the-badge)](https://github.com/AntonVanke/JDBrandMember/releases/latest)
 
-1.  有一定的电脑知识 or 有耐心爱折腾
-2.  需要`Chrome(推荐)`、`Edge(Chromium)`、`Firefox`
-3.  操作系统需是 Mac([@zc-nju-med](https://github.com/AntonVanke/JDBrandMember/issues/18#issuecomment-830028426)在m1上测试正常)、Linux(在deepin上测试过)、Windows
+## 开始之前
 
-#### 安装方法
+### 风险
 
-脚本采用`Selenium`遍历京东入会有礼界面，由于遍历了`20000+`个店铺，可能所需要的时间比较长(视电脑情况30min-5h)
+1.  京东账号有被黑号的风险，即一定时间内不能参与活动
+2.  入会（开卡）有礼会将你的个人信息授权给店铺，所以你可能会收到店铺的推广信息
+3.  退会比较麻烦
+4.  不要泄露你的`config.yaml`
 
-1.  克隆到本地
+### 你需要
 
-    ```shell
-    git clone https://github.com/AntonVanke/JDBrandMember.git
+1.  电脑知道如何安装`Python`环境；手机知道该如何在`Termux`上安装`Python`环境，或者在`ios`上安装`Pythonista`
+    1.  电脑访问 [Python Mirror (taobao.org)](https://npm.taobao.org/mirrors/python/) 安装`Python`
+    2.  安卓手机在各大应用商店搜索`Termux`安装后执行`pkg install python`
+2.  会获取京东账号的`cookie`即`pt_key=ABC;pt_pin=123`
+
+>   如果你不能在电脑上安装`Python`环境，你可以去[Release]([Releases · AntonVanke/JDBrandMember (github.com)](https://github.com/AntonVanke/JDBrandMember/releases))查看已经打包好的程序
+
+## 快速开始
+
+在电脑或者`Termux`上运行的方式
+
+1.  下载本项目
+
+    `git clone https://github.com/AntonVanke/JDBrandMember.git`
+
+    或者下载 zip 压缩包
+
+2.  安装所需的包
+
+    `pip install -r requirements.txt`
+
+3.  配置`config.yaml`
+
+    一般你只需要配置好`cookies`字段就行了像是这样：
+
+    ```yaml
+    cookies:
+      - pt_key=******;pt_pin=******
+      - pt_key=******;pt_pin=******
     ```
 
-2.  安装所需要的包
-
-    ```shell
-    pip3 install -r requirements.txt
+    每个账号占用一行，`-`前面有两个空格而不是<kbd>Tab</kbd>， 后面有一个空格与`cookie`隔开，如果你不知道怎么获取手机京东`cookie`你可以查看这个：[如何获取京东COOKIE](/docs/HOW_TO_GET_COOKIE.md)
+    
+    **其它的一些配置**(几乎用不上)
+    
+    ```yaml
+    # 线程数量: 注意！不要超过 8 线程，否则可能会被京东临时禁止访问
+    thread: 4
+    # 筛选
+    screening:
+      bean: 0  # 最小获得京豆数少于此的不会获取
+      voucher: true  # 是否获取红包？true: 获取, false: 不获取。红包有有效期限！
+    # 用户注册时所填写的信息
+    register:
+      v_sex: 男  # 要求: 男 or 女
+      v_birthday: 2000-09-27  # 要求: yyyy-mm-dd
+      v_name: 康有为  # 要求: 1 - 10 个字符
+    # 用户代理，可自行配置
+    user-agent:
+        - Mozilla/5.0
+    # 获取 shop_id 的连接地址详见 main.py -> get_shopid()
+    shop_id_url: https://antonvanke.github.io/JDBrandMember/shopid.yaml
     ```
+    
+4.  运行
 
-3.  下载对应的浏览器驱动放到项目的`drivers`文件夹下面
+    >   `python main.py`
+    
+5.  出现错误怎么办？
 
-    1.  `chrome`请访问`chrome://version/`查看浏览器的版本，然后去[ChromeDriver Mirror (taobao.org)](https://npm.taobao.org/mirrors/chromedriver/)下载对应的版本/系统驱动
+    >   你可以提交`Issue`报告给我
+    >
+    >   注意： 
+    >
+    >   在境外服务器可能存在失败的情况，尤其是`Github actions`
 
-        >   例如 <https://npm.taobao.org/mirrors/chromedriver/90.0.4430.24/>
+## 运行截图
 
-    2.  `edge`请访问`edge://version/`查看浏览器的版本，[Microsoft Edge - Webdriver (windows.net)](https://msedgewebdriverstorage.z22.web.core.windows.net/)下载
+![](docs/_images/FDB9C153889F569D4B67F05EEF405D91.jpg)
 
-    3.  `Firefox`请访问[Releases · mozilla/geckodriver (github.com)](https://github.com/mozilla/geckodriver/releases/)下载
+## Tools
 
-4.  配置`config.json`
+`tools/traversal.py`: 用于生成`shopid.yaml`你可以访问[怎么更新shopid.yaml](docs/HOW_TO_UPDATE_SHOPID.md) 查看说明
 
-    ```json
-    {
-        "thread": 6,  # 线程数， 推荐4-8线程
-        "browserType": "Chrome",  # Chrome/Edge/Firefox
-        "headless": true,  # 无头模式 请保持开启否则多线程情况下窗口比较多
-        "binary": "",  # 可执行路径，如果驱动没有找到浏览器的话需要你手动配置
-        "useUser": 0,  # 用户下标，默认是0(users[0]第一个用户)
-        "users": []  # 用户列表可以通过 add_cookie.py 添加
-    }
-    ```
+## LICENSE
 
-5.  添加`cookie`
-
-    请在项目目录下执行`python3 add_cookie.py`， 在打开的浏览器界面登录你的京东，此时你可以看到`config.json`已经有了你的用户信息（**请不要随意泄露你的cookie**）
-
-6.  执行主程序
-
-    在项目目录下执行`python3 main.py`，等待执行完毕即可，你可以访问项目下的`logs/jdbm.log`查看你的日志
-
-####  LICENSE
-
->  
 >   MIT License
->   
+>
 >   Copyright (c) 2021 Vanke Anton
->   
->   Permission is hereby granted, free of charge, to any person obtaining a copy
->   of this software and associated documentation files (the "Software"), to deal
->   in the Software without restriction, including without limitation the rights
->   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
->   copies of the Software, and to permit persons to whom the Software is
->   furnished to do so, subject to the following conditions:
->   
->   The above copyright notice and this permission notice shall be included in all
->   copies or substantial portions of the Software.
->   
->   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
->   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
->   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
->   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
->   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
->   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
->   SOFTWARE.
->   
+
