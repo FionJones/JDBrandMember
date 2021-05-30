@@ -2,9 +2,8 @@ name: Python package
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    paths:
+      - 'macos-latest.tar.gz'
 
 jobs:
   build-on-Linux:
