@@ -10,43 +10,13 @@ on:
     branches: [ main ]
 
 jobs:
-#   build-on-macos:
-
-#     runs-on: macos-latest
-
-#     steps:
-#       - uses: actions/checkout@v2
-#       - name: Set up Python 3.8
-#         uses: actions/setup-python@v2
-#         with:
-#           python-version: 3.8
-
-#       - name: Build
-#         run: |
-#           python3 -m pip install -r requirements.txt
-#           python3 -m pip install pyinstaller
-#           pyinstaller -F main.py
-
-#       - name: Gzip
-#         run: |
-#           cp shopid.yaml dist/
-#           cp config.yaml dist/
-#           cp LICENSE dist/
-#           tar -czvf macos-latest.tar.gz dist/
-#       - name: Push
-#         run: |
-#           git config --global user.email 1258255974@qq.com
-#           git config --global user.name FionJones
-#           git add macos-latest.tar.gz
-#           git commit -m "Update Dist"
-
-#       - name: Push changes
-#         uses: ad-m/github-push-action@master
-#         with:
-#           github_token: ${{ secrets.TOKEN }}
   build-on-Linux:
 
-      runs-on: ubuntu-latest
+      runs-on: ${{ matrix.os }}
+      strategy:
+        fail-fast: false
+        matrix:
+          os: [windows-2019, macos-10.15, ubuntu-18.04]
 
       steps:
       - uses: actions/checkout@v2
@@ -61,18 +31,38 @@ jobs:
           python3 -m pip install -r requirements.txt
           python3 -m pip install pyinstaller
           pyinstaller -F main.py
-      - name: Gzip
+          
+      - name: Gzip on Windows
+        if: matrix.os == 'windows-2019'
+        run: |
+          copy /B /Y shopid.yaml dist
+          copy /B /Y config.yaml dist
+          copy /B /Y LICENSE dist
+          tar -czvf ${{ matrix.os }}_${{ github.ref }}.tar.gz dist/
+          
+      - name: Gzip on Macos
+        if: matrix.os == 'macos-10.15'
         run: |
           cp shopid.yaml dist/
           cp config.yaml dist/
           cp LICENSE dist/
-          tar -czvf linux.tar.gz dist/
+          tar -czvf ${{ matrix.os }}_${{ github.ref }}.tar.gz dist/
+      
+      - name: Gzip on Macos
+        if: matrix.os == 'ubuntu-18.04'
+        run: |
+          cp shopid.yaml dist/
+          cp config.yaml dist/
+          cp LICENSE dist/
+          tar -czvf ${{ matrix.os }}_${{ github.ref }}.tar.gz dist/
+          
       - name: Push
         run: |
           git config --global user.email 1258255974@qq.com
           git config --global user.name FionJones
           git add linux.tar.gz
           git commit -m "Update Dist"
+          
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
