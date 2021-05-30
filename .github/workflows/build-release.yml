@@ -15,7 +15,7 @@ jobs:
       strategy:
         fail-fast: false
         matrix:
-          os: [windows-2019, macos-10.15, ubuntu-18.04]
+          os: [windows-2019]
 
       steps:
       - uses: actions/checkout@v2
@@ -88,7 +88,7 @@ jobs:
         run: |
           git config --global user.email 1258255974@qq.com
           git config --global user.name FionJones
-          git add ./dist/*
+          git add .
           git commit -m "Update Dist"
            
       - name: Push changes
