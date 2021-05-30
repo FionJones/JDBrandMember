@@ -12,19 +12,34 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [3.7, 3.8, 3.9]
+    runs-on: macos-latest
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python 3.8
       uses: actions/setup-python@v2
       with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
+        python-version: 3.8
+        
+    - name: Build
       run: |
-        python -m pip install -r requirements.txt
-        python main.py
-
+        python3 -m pip install -r requirements.txt
+        pyinstaller -F main.py
+        
+    - name: Gzip
+      run: |
+        cp shopid.yaml dist/
+        cp config.yaml dist/
+        cp LICENSE dist/
+        tar -czvf macos.tar.gz dist/
+    - name: Push
+      run: |
+        git config --global user.email 1258255974@qq.com
+        git config --global user.name FionJones
+        git add macos.tar.gz
+        git commit -m "Update Dist"
+           
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.TOKEN }}
